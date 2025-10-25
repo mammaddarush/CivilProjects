@@ -1,952 +1,684 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Structure+ Projects</title>
-    <link href="img/favicon.png" rel="icon">
-
-
-    <meta property="og:description"
-          content="Next Generation Cloud Based Structural Optimization and Detailing Web Application">
-    <meta property="og:image" content="img/thumbnail.png"/>
-    <meta property="og:image:width" content="850">
-    <meta property="og:image:height" content="450">
-    <meta property="og:image:type" content="image/png"/>
-
-
-    <meta name="keywords"
-          content="Optimization, Optimize, Optimization by Artificial Intelligence Algorithms, Artificial Intelligence, Cloud Base Structural, Structural, Structure, Structural Optimization, structural software, Cloud Base Structural Web">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description"
-          content="Next Generation Cloud Based Structural Optimization and Detailing Web Application">
-    <link rel="stylesheet" href="css/css-menu.css?af5059339df24f65691492cb8ea596bf">
-    <link rel="stylesheet" href="css/css.css?v=25">
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/js.js?v=16"></script>
-    <link rel="stylesheet" href="css/aos.css?v=1">
-    <script src="js/aos.js"></script>
-    <link rel="stylesheet" href="css/projects.css?v=14">
-    <!--<link rel="stylesheet" href="css/animate.css?v=1">-->
-    <link rel="stylesheet" href="css/css-media.css?v=5">
-    <link rel="stylesheet" href="css/intro.css">
-    <link rel="stylesheet" href="css/animate.css">
-    <script src="js/webgl/Stats.js"></script>
-    <script src="js/webgl/Tween.min.js"></script>
-    <script src="js/webgl/Three.js"></script>
-    <script src="js/webgl/Orbit.js"></script>
-    <script src="js/webgl/Main.js?v=3"></script>
-    <script src="js/webgl/ConvexGeometry.js"></script>
-    <script src="js/webgl/QuickHull.js"></script>
-    <script src="js/webgl/TextTexture.js"></script>
-    <script src="js/webgl/MeshLine.js"></script>
-
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-133308945-1&quot;"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structural Optimization Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: auto;
+            font-family: Arial, sans-serif;
+            background: #ffffff;
         }
-
-        gtag('js', new Date());
-        gtag('config', 'UA-133308945-1');
-    </script>
-    <!--google Ad-->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-766347712"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
+        #container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            margin-top: 180px;
+            margin-bottom: 150px;
         }
-
-        gtag('js', new Date());
-
-        gtag('config', 'AW-766347712');
-    </script>
-
+        canvas {
+            display: block;
+        }
+        #info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+            min-width: 250px;
+            z-index: 10;
+        }
+        #info h3 {
+            margin: 0 0 15px 0;
+            color: #4CAF50;
+            font-size: 18px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 8px;
+        }
+        #info p {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .stat {
+            color: #4CAF50;
+            font-weight: bold;
+            float: right;
+        }
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid rgba(221, 221, 221, 0.5);
+            max-width: 280px;
+            z-index: 10;
+        }
+        #controls h4 {
+            margin: 0 0 12px 0;
+            color: #2196F3;
+            font-size: 16px;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 6px;
+        }
+        #controls .control-item {
+            margin: 8px 0;
+            padding: 6px 0;
+            line-height: 1.5;
+        }
+        #controls .control-label {
+            font-weight: bold;
+            color: #555;
+            display: inline-block;
+            min-width: 90px;
+        }
+        #description {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+            max-width: 280px;
+            line-height: 1.6;
+            z-index: 10;
+        }
+        #description h4 {
+            margin: 0 0 10px 0;
+            color: #FF9800;
+            font-size: 15px;
+        }
+        #walk-controls {
+            position: absolute;
+            bottom: 60px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<div id="fullLoading" style="display: block;">
-    <div style="transform:scale(0.79);">
-        <div></div>
-    </div>
-</div>
-<div id="intro" style="display: none;">
-    <div class="intro-stage">
-        <div class="intro-wrapper">
-            <div class="intro-slash"></div>
-            <div class="intro-sides">
-                <div class="intro-side"></div>
-                <div class="intro-side"></div>
-                <div class="intro-side"></div>
-                <div class="intro-side"></div>
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        <div id="controls">
+            <h4>View Controls</h4>
+            <div class="control-item">
+                <span class="control-label">Rotate:</span> Left Click + Drag
             </div>
-            <div class="intro-text">
-                <div class="intro-text--backing"><img src="img/logo-ver.svg" alt="logo" class="intro-logo"></div>
-                <div class="intro-text--left">
-                    <div class="intro-inner"><img src="img/logo-ver.svg" alt="logo" class="intro-logo"></div>
-                </div>
-                <div class="intro-text--right">
-                    <div class="intro-inner"><img src="img/logo-ver.svg" alt="logo" class="intro-logo"></div>
-                </div>
+            <div class="control-item">
+                <span class="control-label">Pan:</span> Right Click + Drag
+            </div>
+            <div class="control-item">
+                <span class="control-label">Zoom:</span> Mouse Scroll
+            </div>
+            <div class="control-item">
+                <span class="control-label">Navigate:</span> Arrow Keys
+            </div>
+            <div class="control-item">
+                <span class="control-label">Vertical:</span> Space / Shift
             </div>
         </div>
-    </div>
-</div>
-
-<div class="body-background-projects">
-    <div id="container-menu" class="menu-mobile">
-        <div class="menu-btns container-mob">
-            <a href="index.html">
-            <img src="img/Logo.svg?v=1" class="svg">
-            </a>
+        <div id="description">
+            <h4>About This Project</h4>
+            <p>This structural optimization analysis shows a 3-story concrete building with optimized column sizing based on stress distribution. Color-coded elements indicate structural efficiency and load capacity.</p>
         </div>
-        <div id="menu-mobile" class="">
-            <div class="burger-container">
-                <div id="burger">
-                    <div class="bar topBar"></div>
-                    <div class="bar btmBar"></div>
-                </div>
-            </div>
-            <div class="menu-btns">
-                <img src="img/Logo.svg?v=1" class="svg">
-            </div>
-            <div class="items-container menu">
-                <a data-page="index" data-link="home-mob" class="menu-btn">Home</a>
-                <a data-page="index" data-link="optimization-mob" class="menu-btn">Optimization</a>
-                <a data-page="index" data-link="detailing-mob" class="menu-btn hide-detailing">Detailing</a>
-                <a data-page="index" data-link="aboutUs-mob" class="menu-btn">About us</a>
-                <a data-page="index" data-link="pricing-mob" class="menu-btn hide-detailing">Pricing</a>
-                <a data-page="faq" class="menu-btn hide-detailing" href="FAQ.html">Info & FAQ</a>
-                <a data-page="blog" class="menu-btn">Blog</a>
-                <a id="menu_contactus_mob" data-page="contactUs" class="menu-btn click contactus-hide">Contact us</a>
-                <a class="menu-btn" href="https://dashboard.structure.plus" target="_blank">Log in</a>
-            </div>
-        </div>
-    </div>
-    <div id="menu">
-        <div class="menu-btns container">
-            <a href="index.html">
-            <img src="img/Logo.svg?v=1" class="svg">
-            </a>
-            <a href="index.html#home" target="_blank" data-page="index" data-link="home" class="menu-btn">Home</a>
-            <a href="index.html#optimization" target="_blank" data-page="index" data-link="optimization"
-               class="menu-btn">Optimization</a>
-            <a href="index.html#detailing" target="_blank" data-page="index" data-link="detailing" class="menu-btn hide-detailing">Detailing</a>
-            <a href="index.html#aboutUs" target="_blank" data-page="index" data-link="aboutUs" class="menu-btn">About us</a>
-            <a href="index.html#pricing" target="_blank" data-page="index" data-link="pricing"
-               class="menu-btn hide-detailing">Pricing</a>
-            <a data-page="faq" class="menu-btn hide-detailing" href="FAQ.html">Info & FAQ</a>
-            <a data-page="blog" class="menu-btn" href="blog.html" target="_blank">Blog</a>
-            <a id="menu_contactus_desktop" data-page="contactUs" class="menu-btn click contactus-hide" href="contactUs.html">Contact us</a>
-            <a class="menu-btn" href="https://dashboard.structure.plus" target="_blank">Log in</a>
-        </div>
-
-    </div>
-
-    <div class="project-header">
-        <div class="project-header-box">
-            <div class="text">Projects</div>
-
-        </div>
-    </div>
-    <div class="open-menu-project">
-        <!--<button><img src="https://cdn4.iconfinder.com/data/icons/wirecons-free-vector-icons/32/menu-alt-256.png">-->
-        <!--</button>-->
-
-        <span></span>
-        <span></span>
-        <span></span>
-        <div class="more">More Projects</div>
-    </div>
-    <div id="project-workspace" class="container">
-
-        <div class="project-list">
-            <div class="projects-btns">
-                <button class="up">˄</button>
-                <button class="down">˅</button>
-            </div>
-            <div class="slider">
-                <div class="project active">
-                    <div class="project-overlay"></div>
-                    <img src="img/1-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/2-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/3-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/4-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/5-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/6-min.jpg"></div>
-                <div class="project">
-                <div class="project-overlay"></div>
-                <img src="img/7-min.jpg"></div>
-
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/8-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/9-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/10-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/11-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/12-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/13-min.jpg"></div>
-                <div class="project">
-                    <div class="project-overlay"></div>
-                    <img src="img/14-min.jpg"></div>
-            </div>
-
-
-        </div>
-        <div class="project-desc">
-            <div class="desc active">
-                <div id="proj_webgl0" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">
-                                    Residential
-                                </div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Steel</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 7212</div>
-
-                                <div class="desc">Cost Reduction : $101,000</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 661</div>
-                                <div class="desc">After Optimization : 560</div>
-                                <div class="desc">Saved : %15.3</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl1" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Concrete</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 2800</div>
-
-                                <div class="desc">Cost Reduction : $16,000</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 92</div>
-                                <div class="desc">After Optimization : 76</div>
-                                <div class="desc">Saved : %17.4</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl2" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Concrete</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 13500</div>
-
-                                <div class="desc">Cost Reduction : $42,000</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 326</div>
-                                <div class="desc">After Optimization : 284</div>
-                                <div class="desc">Saved : %12.9</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-            <div id="proj_webgl3" class="proj_webgl">
-                <div class="desc-mobile">
-                    <div class="text">Structural information</div>
-                    <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                </div>
-                <div class="description">
-                    <div class="box-desc">
-                        <div class="box-desc-header">
-                            <div class="text">Residential</div>
-                        </div>
-                        <div class="box-desc-border">
-                            <div class="desc">Material : Concrete</div>
-                            <div class="desc">Area (m<sup>2</sup>) : 3757</div>
-
-                            <div class="desc">Cost Reduction : $19,000</div>
-                            <div class="desc header">Steels Weight (Tonne)</div>
-                            <div class="desc">Before Optimization : 112</div>
-                            <div class="desc">After Optimization : 93</div>
-                            <div class="desc">Saved : %17</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-            <div class="desc">
-                <div id="proj_webgl4" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Steel</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 5354</div>
-
-                                <div class="desc">Cost Reduction : $106,000</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 553</div>
-                                <div class="desc">After Optimization : 447</div>
-                                <div class="desc">Saved : %19.2</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl5" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Concrete</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 1045</div>
-
-                                <div class="desc">Cost Reduction : $8,000</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 38</div>
-                                <div class="desc">After Optimization : 30</div>
-                                <div class="desc">Saved : %21.1</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl6" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Concrete</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 22000</div>
-
-                                <div class="desc">Cost Reduction : $250,000</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 1350</div>
-                                <div class="desc">After Optimization : 1100</div>
-                                <div class="desc">Saved : %18.5</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl7" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Concrete</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 550</div>
-
-                                <div class="desc">Cost Reduction : $2,340</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 24</div>
-                                <div class="desc">After Optimization : 20.4</div>
-                                <div class="desc">Saved : %15</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl8" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Steel</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 1130</div>
-
-                                <div class="desc">Cost Reduction : $48,750</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 158</div>
-                                <div class="desc">After Optimization : 83</div>
-                                <div class="desc">Saved : %47.5</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl9" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Concrete</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 16000</div>
-
-                                <div class="desc">Cost Reduction : $81,250</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 530</div>
-                                <div class="desc">After Optimization : 405</div>
-                                <div class="desc">Saved : %23.6</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl10" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Steel</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 1000</div>
-
-                                <div class="desc">Cost Reduction : $13,527</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 99.4</div>
-                                <div class="desc">After Optimization : 78.6</div>
-                                <div class="desc">Saved : %20.9</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl11" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Steel</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 735</div>
-
-                                <div class="desc">Cost Reduction : $5,187</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 47.9</div>
-                                <div class="desc">After Optimization : 39.9</div>
-                                <div class="desc">Saved : %16.7</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl12" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Steel</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 3200</div>
-
-                                <div class="desc">Cost Reduction : $4,602</div>
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 28.9</div>
-                                <div class="desc">After Optimization : 21.8</div>
-                                <div class="desc">Saved : %24.5</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="desc">
-                <div id="proj_webgl13" class="proj_webgl">
-                    <div class="desc-mobile">
-                        <div class="text">Structural information</div>
-                        <span class="arrow">
-                            <span></span>
-                            <span></span>
-                        </span>
-                    </div>
-                    <div class="description">
-                        <div class="box-desc">
-                            <div class="box-desc-header">
-                                <div class="text">Residential</div>
-                            </div>
-                            <div class="box-desc-border">
-                                <div class="desc">Material : Concrete</div>
-                                <div class="desc">Area (m<sup>2</sup>) : 1850</div>
-
-                                <!--<div class="desc">Cost Reduction : $250,000</div>-->
-                                <div class="desc header">Steels Weight (Tonne)</div>
-                                <div class="desc">Before Optimization : 67</div>
-                                <div class="desc">After Optimization : 54</div>
-                                <div class="desc">Saved : %19.4</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        <div id="info">
+            <h3>Project Details</h3>
+            <p>Material: <span class="stat">Concrete</span></p>
+            <p>Area: <span class="stat">22,000 m²</span></p>
+            <p>Cost Reduction: <span class="stat">$250,000</span></p>
+            <p>Before Optimization: <span class="stat">1,350 tons</span></p>
+            <p>After Optimization: <span class="stat">1,100 tons</span></p>
+            <p>Saved: <span class="stat">18.5%</span></p>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer;
+        let structure;
+        let mouseX = 0, mouseY = 0;
+        let targetRotationX = 0, targetRotationY = 0;
+        let isDragging = false;
+        let isPanning = false;
+        let cameraTarget = new THREE.Vector3(20, 5, 0); // Center between buildings
+        let cameraPan = new THREE.Vector3(20, 0, 0);
+        
+        // Walk mode variables
+        let keys = {};
+        let moveSpeed = 0.3;
+        let verticalSpeed = 0.2;
 
-    <div id="footer">
-<div class="description">
-    <img alt="Logo-footer" src="img/Logo-footer.svg" class="svg logo"/>
-    <div style="display: flex;justify-content: center;align-items: center;flex-wrap: wrap;padding-bottom: 16px">
-        <a href="/cdn-cgi/l/email-protection#c5acaba3aa85b6b1b7b0a6b1b0b7a0ebb5a9b0b6" class="text"><img height="100%" width="100%" alt="footer-email" src="img/footer-email.svg" class="svg"/><span class="__cf_email__" data-cfemail="c1a8afa7ae81b2b5b3b4a2b5b4b3a4efb1adb4b2">[email&#160;protected]</span></a>
-        <!-- <a href="tel:0061290539525" class="text"><img height="100%" width="100%" alt="footer-tell" src="img/footer-tell.svg" class="svg"/> (+61)
-            290539525</a> -->
-        <a href="skype:live:StructurePlus?call" class="text"><img height="100%" width="100%" alt="footer-skype" src="img/footer-skype.svg" class="svg"/>
-            StructurePlus</a>
-        <div  class="footer-subscribe" >
-            <input placeholder="Your Email" type="text">
-            <button type="button" tabindex="-1" onclick="footerSubscribe(this)">Subscribe</button>
-        </div>
-    </div>
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf5f5f5);
 
+            // Camera setup - positioned to see both buildings
+            camera = new THREE.PerspectiveCamera(
+                50,
+                window.innerWidth / window.innerHeight,
+                1,
+                1000
+            );
+            camera.position.set(50, 30, 60);
+            camera.lookAt(cameraTarget);
 
-    <!-- <a href="https://www.google.com/maps?cid=8994352941330888804&hl=en" target="_blank" class="text address"><img height="100%" width="100%" alt="footer-address"
-            src="img/footer-address.svg" class="svg"/> Structure Plus Co, 299A Canterbury Road,
-        Entry Via Mavis St, Revesby NSW 2212, Sydney, Australia
-    </a> -->
-    <a href="tc.html" class="text footer-tc-hide" target="_blank">Terms and Conditions</a>
-    <div class="Copyright">© Copyright 2022. Structure Plus - Toronto, Canada. All rights reserved.</div>
-</div>
-</div>
+            // Renderer setup
+            const canvas = document.getElementById('canvas');
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
 
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(20, 30, 20);
+            scene.add(directionalLight);
 
-    function footerSubscribe(e){
-        if( $(e).prev().val()!==""){
-                    $(e).prop("disabled",true);
-                    $(e).text("Please wait");
-                    $.post("request.php", {
-                        reqID: 105,
-                        name: "footer-subscribe-form",
-                        email: $(e).prev().val(),
-                        message:"footer-subscribe-form",
-                    }, function () {
-                        $(e).prop("disabled",false);
-                        $(e).text("Subscribe");
-                        $(e).prev().val("");
-                        alert("Your email address has been successfully sent");
-                    })
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight2.position.set(-20, 20, -20);
+            scene.add(directionalLight2);
+
+            // Create structural grid
+            createStructure();
+
+            // Mouse events
+            canvas.addEventListener('mousedown', onMouseDown);
+            canvas.addEventListener('mousemove', onMouseMove);
+            canvas.addEventListener('mouseup', onMouseUp);
+            canvas.addEventListener('wheel', onWheel);
+            canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // Keyboard events for walking
+            window.addEventListener('keydown', onKeyDown);
+            window.addEventListener('keyup', onKeyUp);
+
+            window.addEventListener('resize', onWindowResize);
+
+            animate();
+        }
+
+        function createStructure() {
+            structure = new THREE.Group();
+
+            // ========================================
+            // STRUCTURE 1 - 3 STORY BUILDING
+            // ========================================
+            // Change column positions, heights, and materials here for different structures
+            
+            const numStories = 3;
+            const storyHeight = 4;
+            
+            // Column positions for Structure 1 (4x4 grid)
+            const columnPositions = [
+                [-15, -15], [-15, -5], [-15, 5], [-15, 15],
+                [-5, -15], [-5, -5], [-5, 5], [-5, 15],
+                [5, -15], [5, -5], [5, 5], [5, 15],
+                [15, -15], [15, -5], [15, 5], [15, 15]
+            ];
+
+            // Create columns for each story
+            for (let story = 0; story < numStories; story++) {
+                const baseHeight = story * storyHeight;
+                
+                columnPositions.forEach((pos, index) => {
+                    // Vary column sizes to show optimization
+                    const isOptimized = Math.random() > 0.4;
+                    const radius = isOptimized ? 0.4 : 0.6;
+                    
+                    const geometry = new THREE.CylinderGeometry(radius, radius, storyHeight, 8);
+                    
+                    // Color based on stress level (green = optimized, yellow/red = high stress)
+                    const stressLevel = Math.random();
+                    let color;
+                    if (stressLevel < 0.5) {
+                        color = new THREE.Color(0x4CAF50); // Green - optimized
+                    } else if (stressLevel < 0.8) {
+                        color = new THREE.Color(0xFFC107); // Yellow - moderate
+                    } else {
+                        color = new THREE.Color(0xF44336); // Red - high stress
+                    }
+                    
+                    const material = new THREE.MeshPhongMaterial({ 
+                        color: color,
+                        shininess: 30
+                    });
+                    const column = new THREE.Mesh(geometry, material);
+                    
+                    column.position.set(pos[0], baseHeight + storyHeight / 2, pos[1]);
+                    structure.add(column);
+                });
+            }
+
+            // Create beams connecting columns for each story
+            for (let story = 0; story <= numStories; story++) {
+                const beamHeight = story * storyHeight;
+                
+                for (let i = -15; i <= 15; i += 10) {
+                    for (let j = -15; j < 15; j += 10) {
+                        // Horizontal beams (X direction)
+                        const beamGeomX = new THREE.BoxGeometry(10, 0.5, 0.5);
+                        const beamMatX = new THREE.MeshPhongMaterial({ 
+                            color: 0x2196F3,
+                            shininess: 30
+                        });
+                        const beamX = new THREE.Mesh(beamGeomX, beamMatX);
+                        beamX.position.set(i + 5, beamHeight, j);
+                        structure.add(beamX);
+
+                        // Horizontal beams (Z direction)
+                        const beamGeomZ = new THREE.BoxGeometry(0.5, 0.5, 10);
+                        const beamMatZ = new THREE.MeshPhongMaterial({ 
+                            color: 0x2196F3,
+                            shininess: 30
+                        });
+                        const beamZ = new THREE.Mesh(beamGeomZ, beamMatZ);
+                        beamZ.position.set(j, beamHeight, i + 5);
+                        structure.add(beamZ);
+                    }
                 }
-                else{
-                    alert("Please enter your Email")
-               }
-    }
+            }
 
-</script>
-</div>
+            // Create slabs for each floor
+            for (let story = 0; story <= numStories; story++) {
+                const slabHeight = story * storyHeight;
+                
+                const slabGeometry = new THREE.BoxGeometry(32, 0.3, 32);
+                const slabMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0x9E9E9E,
+                    transparent: true,
+                    opacity: 0.6,
+                    shininess: 30
+                });
+                const slab = new THREE.Mesh(slabGeometry, slabMaterial);
+                slab.position.set(0, slabHeight, 0);
+                structure.add(slab);
+            }
+
+            // Create walls (exterior walls for Structure 1)
+            const wallMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xBDBDBD,
+                transparent: true,
+                opacity: 0.4,
+                side: THREE.DoubleSide,
+                shininess: 20
+            });
+
+            // Wall dimensions
+            const totalHeight = numStories * storyHeight;
+            const wallThickness = 0.2;
+
+            // North wall
+            const northWall = new THREE.Mesh(
+                new THREE.BoxGeometry(32, totalHeight, wallThickness),
+                wallMaterial
+            );
+            northWall.position.set(0, totalHeight / 2, -16);
+            structure.add(northWall);
+
+            // South wall
+            const southWall = new THREE.Mesh(
+                new THREE.BoxGeometry(32, totalHeight, wallThickness),
+                wallMaterial
+            );
+            southWall.position.set(0, totalHeight / 2, 16);
+            structure.add(southWall);
+
+            // East wall
+            const eastWall = new THREE.Mesh(
+                new THREE.BoxGeometry(wallThickness, totalHeight, 32),
+                wallMaterial
+            );
+            eastWall.position.set(16, totalHeight / 2, 0);
+            structure.add(eastWall);
+
+            // West wall
+            const westWall = new THREE.Mesh(
+                new THREE.BoxGeometry(wallThickness, totalHeight, 32),
+                wallMaterial
+            );
+            westWall.position.set(-16, totalHeight / 2, 0);
+            structure.add(westWall);
+
+            // ========================================
+            // STRUCTURE 2 - 2 STORY BUILDING (ADJACENT)
+            // ========================================
+            // Change these parameters for a different adjacent structure
+            
+            const structure2NumStories = 2;
+            const structure2Height = 4;
+            const structure2OffsetX = 45; // Distance from first structure
+            
+            // Column positions for Structure 2 (3x3 grid - smaller building)
+            const structure2Columns = [
+                [0, 0], [0, 8], [0, 16],
+                [8, 0], [8, 8], [8, 16],
+                [16, 0], [16, 8], [16, 16]
+            ];
+
+            // Create columns for Structure 2
+            for (let story = 0; story < structure2NumStories; story++) {
+                const baseHeight = story * structure2Height;
+                
+                structure2Columns.forEach((pos) => {
+                    const radius = 0.5;
+                    const geometry = new THREE.CylinderGeometry(radius, radius, structure2Height, 8);
+                    
+                    // Different color scheme for Structure 2
+                    const stressLevel = Math.random();
+                    let color;
+                    if (stressLevel < 0.6) {
+                        color = new THREE.Color(0x00BCD4); // Cyan - optimized
+                    } else {
+                        color = new THREE.Color(0xFF9800); // Orange - moderate stress
+                    }
+                    
+                    const material = new THREE.MeshPhongMaterial({ 
+                        color: color,
+                        shininess: 30
+                    });
+                    const column = new THREE.Mesh(geometry, material);
+                    
+                    column.position.set(
+                        structure2OffsetX + pos[0], 
+                        baseHeight + structure2Height / 2, 
+                        pos[1] - 8
+                    );
+                    structure.add(column);
+                });
+            }
+
+            // Create beams for Structure 2
+            for (let story = 0; story <= structure2NumStories; story++) {
+                const beamHeight = story * structure2Height;
+                
+                for (let i = 0; i <= 16; i += 8) {
+                    for (let j = 0; j < 16; j += 8) {
+                        // Horizontal beams (X direction)
+                        const beamGeomX = new THREE.BoxGeometry(8, 0.4, 0.4);
+                        const beamMatX = new THREE.MeshPhongMaterial({ 
+                            color: 0x9C27B0,
+                            shininess: 30
+                        });
+                        const beamX = new THREE.Mesh(beamGeomX, beamMatX);
+                        beamX.position.set(structure2OffsetX + i + 4, beamHeight, j - 8);
+                        structure.add(beamX);
+
+                        // Horizontal beams (Z direction)
+                        const beamGeomZ = new THREE.BoxGeometry(0.4, 0.4, 8);
+                        const beamMatZ = new THREE.MeshPhongMaterial({ 
+                            color: 0x9C27B0,
+                            shininess: 30
+                        });
+                        const beamZ = new THREE.Mesh(beamGeomZ, beamMatZ);
+                        beamZ.position.set(structure2OffsetX + j, beamHeight, i - 8);
+                        structure.add(beamZ);
+                    }
+                }
+            }
+
+            // Create slabs for Structure 2
+            for (let story = 0; story <= structure2NumStories; story++) {
+                const slabHeight = story * structure2Height;
+                
+                const slabGeometry = new THREE.BoxGeometry(18, 0.25, 18);
+                const slabMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xE0E0E0,
+                    transparent: true,
+                    opacity: 0.6,
+                    shininess: 30
+                });
+                const slab = new THREE.Mesh(slabGeometry, slabMaterial);
+                slab.position.set(structure2OffsetX + 8, slabHeight, 0);
+                structure.add(slab);
+            }
+
+            // Create walls for Structure 2
+            const wall2Material = new THREE.MeshPhongMaterial({ 
+                color: 0xD1C4E9,
+                transparent: true,
+                opacity: 0.35,
+                side: THREE.DoubleSide,
+                shininess: 20
+            });
+
+            const totalHeight2 = structure2NumStories * structure2Height;
+
+            // Structure 2 walls
+            const s2NorthWall = new THREE.Mesh(
+                new THREE.BoxGeometry(18, totalHeight2, wallThickness),
+                wall2Material
+            );
+            s2NorthWall.position.set(structure2OffsetX + 8, totalHeight2 / 2, -9);
+            structure.add(s2NorthWall);
+
+            const s2SouthWall = new THREE.Mesh(
+                new THREE.BoxGeometry(18, totalHeight2, wallThickness),
+                wall2Material
+            );
+            s2SouthWall.position.set(structure2OffsetX + 8, totalHeight2 / 2, 9);
+            structure.add(s2SouthWall);
+
+            const s2EastWall = new THREE.Mesh(
+                new THREE.BoxGeometry(wallThickness, totalHeight2, 18),
+                wall2Material
+            );
+            s2EastWall.position.set(structure2OffsetX + 17, totalHeight2 / 2, 0);
+            structure.add(s2EastWall);
+
+            const s2WestWall = new THREE.Mesh(
+                new THREE.BoxGeometry(wallThickness, totalHeight2, 18),
+                wall2Material
+            );
+            s2WestWall.position.set(structure2OffsetX - 1, totalHeight2 / 2, 0);
+            structure.add(s2WestWall);
+
+            // Add grid helper to structure group - larger to cover both buildings
+            const gridHelper = new THREE.GridHelper(120, 60, 0x888888, 0xcccccc);
+            gridHelper.position.set(20, 0, 0); // Center between both buildings
+            structure.add(gridHelper);
+
+            scene.add(structure);
+        }
+
+        function onMouseDown(e) {
+            if (e.button === 0) { // Left click - rotate
+                isDragging = true;
+                isPanning = false;
+            } else if (e.button === 2) { // Right click - pan
+                isPanning = true;
+                isDragging = false;
+            }
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        }
+
+        function onMouseMove(e) {
+            if (isDragging) {
+                const deltaX = e.clientX - mouseX;
+                const deltaY = e.clientY - mouseY;
+                
+                targetRotationY += deltaX * 0.005;
+                targetRotationX += deltaY * 0.005;
+                
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            } else if (isPanning) {
+                const deltaX = e.clientX - mouseX;
+                const deltaY = e.clientY - mouseY;
+                
+                // Calculate pan based on camera orientation
+                const panSpeed = 0.05;
+                
+                // Get camera's right and up vectors
+                const cameraDirection = new THREE.Vector3();
+                camera.getWorldDirection(cameraDirection);
+                
+                const cameraRight = new THREE.Vector3();
+                cameraRight.crossVectors(cameraDirection, new THREE.Vector3(0, 1, 0)).normalize();
+                
+                const cameraUp = new THREE.Vector3();
+                cameraUp.crossVectors(cameraRight, cameraDirection).normalize();
+                
+                // Move camera and target
+                const panX = cameraRight.clone().multiplyScalar(-deltaX * panSpeed);
+                const panY = cameraUp.clone().multiplyScalar(deltaY * panSpeed);
+                
+                camera.position.add(panX).add(panY);
+                cameraTarget.add(panX).add(panY);
+                cameraPan.copy(cameraTarget);
+                
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            }
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+            isPanning = false;
+        }
+
+        function onWheel(e) {
+            e.preventDefault();
+            
+            // Get mouse position in normalized device coordinates
+            const rect = renderer.domElement.getBoundingClientRect();
+            const mouse = new THREE.Vector2(
+                ((e.clientX - rect.left) / rect.width) * 2 - 1,
+                -((e.clientY - rect.top) / rect.height) * 2 + 1
+            );
+            
+            // Create ray from camera through mouse position
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+            
+            // Get the direction from camera toward mouse in 3D space
+            const zoomDirection = raycaster.ray.direction.clone();
+            
+            // Zoom amount
+            const zoomAmount = e.deltaY > 0 ? 2 : -2;
+            
+            // Move camera toward the mouse point
+            camera.position.addScaledVector(zoomDirection, zoomAmount);
+            
+            // Also move the target point
+            cameraTarget.addScaledVector(zoomDirection, zoomAmount);
+            cameraPan.copy(cameraTarget);
+            
+            // Only clamp minimum distance (zoom in limit), allow infinite zoom out
+            const distance = camera.position.length();
+            if (distance < 5) {
+                camera.position.normalize().multiplyScalar(5);
+            }
+            // Removed maximum distance limit for infinite zoom out
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onKeyDown(e) {
+            keys[e.key.toLowerCase()] = true;
+            keys[e.code.toLowerCase()] = true;
+        }
+
+        function onKeyUp(e) {
+            keys[e.key.toLowerCase()] = false;
+            keys[e.code.toLowerCase()] = false;
+        }
+
+        function updateWalkMovement() {
+            // Get camera direction vectors
+            const forward = new THREE.Vector3();
+            camera.getWorldDirection(forward);
+            forward.y = 0; // Keep movement horizontal
+            forward.normalize();
+
+            const right = new THREE.Vector3();
+            right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
+
+            // Forward/Backward (W/S or Arrow Up/Down)
+            if (keys['w'] || keys['arrowup']) {
+                camera.position.addScaledVector(forward, moveSpeed);
+                cameraTarget.addScaledVector(forward, moveSpeed);
+            }
+            if (keys['s'] || keys['arrowdown']) {
+                camera.position.addScaledVector(forward, -moveSpeed);
+                cameraTarget.addScaledVector(forward, -moveSpeed);
+            }
+
+            // Left/Right (A/D or Arrow Left/Right)
+            if (keys['a'] || keys['arrowleft']) {
+                camera.position.addScaledVector(right, -moveSpeed);
+                cameraTarget.addScaledVector(right, -moveSpeed);
+            }
+            if (keys['d'] || keys['arrowright']) {
+                camera.position.addScaledVector(right, moveSpeed);
+                cameraTarget.addScaledVector(right, moveSpeed);
+            }
+
+            // Up/Down (Space/Shift)
+            if (keys[' '] || keys['space']) {
+                camera.position.y += verticalSpeed;
+                cameraTarget.y += verticalSpeed;
+            }
+            if (keys['shift'] || keys['shiftleft'] || keys['shiftright']) {
+                camera.position.y -= verticalSpeed;
+                cameraTarget.y -= verticalSpeed;
+            }
+
+            // Update camera pan to match target
+            cameraPan.copy(cameraTarget);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Update walk movement
+            updateWalkMovement();
+
+            // Smooth rotation
+            structure.rotation.y += (targetRotationY - structure.rotation.y) * 0.1;
+            structure.rotation.x += (targetRotationX - structure.rotation.x) * 0.1;
+
+            // Apply panning
+            cameraTarget.x = cameraPan.x;
+            cameraTarget.z = cameraPan.z;
+            
+            // Update camera to look at target
+            camera.lookAt(cameraTarget);
+
+            // Auto-rotate slowly
+            structure.rotation.y += 0.001;
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
 </body>
 </html>
-<script>
-
-    console.log("s");
-
-    scrollFunction();
-    window.onscroll = function () {
-        scrollFunction();
-    };
-
-    $(window).on('load', function () {
-
-        initSvgToInlineSvg();
-
-        initFirstLoadAnim();
-        $("#fullLoading").hide();
-    });
-    // function initFirstLoadAnim() {
-    //     $("#fullLoading").hide();
-    //     $("#intro").show();
-    //     document.getElementById("intro").style.display = "block";
-    //
-    //     setTimeout(function () {
-    //         $("#intro").hide();
-    //     }, 4800);
-    //
-    //
-    // }
-    $.get("https://ipinfo.io?token=7eeb52e87b1764", function (response) {
-
-        var countryID =response.country.toLowerCase();
-        if (countryID === "ir" || countryID === "in") {
-            $(".hide-detailing").removeClass("hide-detailing");
-
-
-        }
-        else{
-            $("#menu_optimization_desktop").text(" How it works");
-            $("#menu_optimization_mob").text(" How it works");
-            $("#menu_contactus_desktop").removeClass("contactus-hide");
-            $("#menu_contactus_mob").removeClass("contactus-hide");
-            $(".footer-tc-hide").removeClass("footer-tc-hide");
-
-        }
-
-    }, "jsonp")
-    function initFirstLoadAnim() {
-
-        $("#intro").show();
-
-        setTimeout(function () {
-            $("#intro").hide();
-
-        }, 5500);
-
-        // setTimeout(function () {
-        //
-        // }, 6000);
-
-    }
-
-    function initSvgToInlineSvg() {
-        var count = 1;
-        $('img.svg').each(function () {
-            var $img = jQuery(this);
-            var imgID = $img.attr('id');
-            var imgClass = $img.attr('class');
-            var imgURL = $img.attr('src');
-            jQuery.get(imgURL, function (data) {
-                count++;
-                var $svg = jQuery(data).find('svg');
-                if (typeof imgID !== 'undefined') {
-                    $svg = $svg.attr('id', imgID);
-                }
-                if (typeof imgClass !== 'undefined') {
-                    $svg = $svg.attr('class', imgClass + ' replaced-svg');
-                }
-                $svg = $svg.removeAttr('xmlns:a');
-                if (!$svg.attr('viewBox') && $svg.attr('height') && $svg.attr('width')) {
-                    $svg.attr('viewBox', '0 0 ' + $svg.attr('height') + ' ' + $svg.attr('width'))
-                }
-                $img.replaceWith($svg);
-            }, 'xml')
-        });
-
-
-    }
-
-    function scrollFunction() {
-        var nav1 = document.getElementById('menu');
-        if (document.documentElement.scrollTop <= 10) nav1.className = ''; else nav1.className = 'scroll';
-
-        var nav = document.getElementById('container-menu');
-        if (document.documentElement.scrollTop <= 10) nav.className = ''; else nav.className = 'scroll';
-    }
-
-    $(".desc-mobile").click(function () {
-        $(this).next().toggleClass('open');
-        $(this).find('.arrow').toggleClass('active');
-        var panel = this.nextElementSibling;
-        var that = $(this).next();
-        if (that.hasClass('open')) {
-            panel.style.maxHeight = panel.scrollHeight + "px";
-
-        } else {
-            if (panel.style.maxHeight) {
-                panel.style.maxHeight = 0 + "px";
-            }
-
-        }
-    })
-    $(".project-list .project").click(function () {
-        window.history.pushState('', '', 'projects#projectID=' + $(this).index());
-        document.location.reload()
-
-
-    });
-    // $(function() {
-    //     var box = $('.project-list');
-    //     var button = $('.open-menu-project, .header-menu-project');
-    //     button.on('click', function(){
-    //         box.toggleClass('active');
-    //     });
-    // });
-    $(function () {
-        var button = $('.projects-btns .up, .projects-btns .down');
-        button.on('click', function () {
-
-            var firstElem = $('#project-workspace > .project-list > .slider > .project:first-child');
-            var len = $('#project-workspace > .project-list > .slider > .project').length;
-            var margin = 0;
-            var curMargin = 0;
-            margin = firstElem.height();
-            if ($(this).hasClass("up")) {
-                console.log("ss")
-
-            if (firstElem[0].style.marginTop !== "") {
-                if (parseInt(("-" + (firstElem.height() + 14) * 10)) === parseInt(firstElem[0].style.marginTop)) {
-                    return
-                }
-                curMargin = parseInt(firstElem[0].style.marginTop);
-
-            }
-            margin = curMargin - (firstElem.height() + 14);
-            firstElem.css("margin-top", +margin + "px");
-            }
-            else{
-                if (firstElem[0].style.marginTop !== "") {
-                    if (parseInt(firstElem[0].style.marginTop)===0) {
-                        return
-                    }
-                    curMargin = parseInt(firstElem[0].style.marginTop);
-
-                }
-                else{
-                    return
-                }
-                margin = curMargin + (firstElem.height() + 14);
-                firstElem.css("margin-top", +margin + "px");
-            }
-
-        });
-    });
-    $(".open-menu-project").click(function () {
-        var box = $('.project-list');
-        var view = $('.project-desc');
-        box.toggleClass('active');
-        view.toggleClass('move-right');
-        $(this).toggleClass('open');
-    });
-
-
-    $("#menu-mobile").click(function () {
-        if ($(this).hasClass('menu-opened')) {
-            $(this).removeClass('menu-opened');
-        } else {
-            $(this).addClass('menu-opened');
-        }
-    });
-
-    $('#menu-mobile .menu .menu-btn').on("click", function (e) {
-
-        if ($(this).attr('data-page') !== undefined) {
-            var link = "";
-            if ($(this).attr('data-link') !== undefined) {
-                link = $(this).attr('data-link');
-            }
-            window.open("." + "/" + $(this).attr("data-page") + ".html#" + link, '_blank');
-        }
-        else if ($(this).attr('data-link') !== undefined) {
-            $('html, body').animate({scrollTop: $('#' + $(this).attr('data-link')).offset().top - 10}, 'slow');
-        }
-    });
-
-
-    var urlHash = window.location.hash.replace("#", "");
-    var projectID = 0;
-    if (urlHash !== "") {
-        var pieces = urlHash.split("&"), parts;
-        for (var i = 0; i < pieces.length; i++) {
-            parts = pieces[i].split("=");
-            if (parts[0] === "projectID") {
-                projectID = parts[1];
-            }
-
-
-        }
-
-
-    }
-
-
-    var firstElem = $('#project-workspace > .project-list > .slider > .project:first-child');
-
-
-       var margin = firstElem.height() + 14;
-       var number=0;
-       if(projectID==="4" ||projectID==="5"||projectID==="6" ||projectID==="7" ||projectID==="8" ||projectID==="9" ||projectID==="10" ||projectID==="11" ||projectID==="12" ||projectID==="13"){
-           if(projectID==="4"){
-               number=1;
-           }
-           else  if(projectID==="5"){
-               number=2;
-           }
-           else  if(projectID==="6"){
-               number=3;
-           }
-           else  if(projectID==="7"){
-               number=4;
-           }
-           else  if(projectID==="8"){
-               number=5;
-           }
-           else  if(projectID==="9"){
-               number=6;
-           }
-           else  if(projectID==="10"){
-               number=7;
-           }
-           else  if(projectID==="11"){
-               number=8;
-           }
-           else  if(projectID==="12"){
-               number=9;
-           }
-           else  if(projectID==="13"){
-               number=10;
-           }
-
-           firstElem.css("margin-top","-" +(Number(margin)*number) + "px");
-       }
-
-
-
-    $(".project-list .project").removeClass("active");
-    $(".project-desc .desc").removeClass('active');
-    $(".project-list .project:nth(" + projectID + ")").addClass('active');
-    $(".project-desc > .desc:nth(" + projectID + ")").addClass('active');
-
-
-    window.webgl = new modelView();
-    window.webgl.init({
-        modelContainer: 'proj_webgl' + projectID,
-        initStats: false,
-    });
-    var data = "Models/data" + projectID + ".txt?v=1";
-    console.log(data)
-    $.ajax({
-        url: data,
-        async: true,
-        success: function (res) {
-
-            window.webgl.updateObjects(JSON.parse(res));
-            window.webgl.showObj({mainType: "element", viewType: ["object"]});
-
-        }
-    });
-
-
-</script>
