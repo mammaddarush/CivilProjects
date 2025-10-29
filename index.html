@@ -20,6 +20,10 @@
             overflow-x: hidden;
         }
 
+        body.fullscreen-mode {
+            overflow: hidden;
+        }
+
         /* Animated starry background */
         .stars-container {
             position: fixed;
@@ -56,6 +60,10 @@
             position: sticky;
             top: 0;
             z-index: 100;
+        }
+
+        body.fullscreen-mode nav {
+            display: none;
         }
         
         .nav-container {
@@ -116,6 +124,12 @@
             z-index: 1;
         }
 
+        body.fullscreen-mode .page-wrapper {
+            padding: 0;
+            max-width: 100%;
+            margin: 0;
+        }
+
         /* Canvas Container - Full Width */
         .canvas-wrapper {
             background: rgba(255, 255, 255, 0.95);
@@ -127,12 +141,24 @@
             margin-bottom: 30px;
             position: relative;
         }
+
+        body.fullscreen-mode .canvas-wrapper {
+            border-radius: 0;
+            border: none;
+            margin-bottom: 0;
+            box-shadow: none;
+        }
         
         #container {
             width: 100%;
             height: 900px;
             position: relative;
             background: #f8fafc;
+        }
+
+        body.fullscreen-mode #container {
+            height: 100vh;
+            width: 100vw;
         }
 
         #container.dark-canvas {
@@ -151,12 +177,18 @@
             top: 20px;
             right: 20px;
             z-index: 10;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             padding: 12px 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toggle-row {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -166,6 +198,7 @@
             color: #1e293b;
             font-weight: 600;
             font-size: 13px;
+            min-width: 85px;
         }
 
         #container.dark-canvas .canvas-bg-label {
@@ -178,20 +211,20 @@
             top: 20px;
             left: 20px;
             z-index: 10;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            width: 280px;
+            width: 220px;
             max-height: 800px;
             overflow-y: auto;
         }
 
         #container.dark-canvas .layers-panel {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .layers-panel h3 {
@@ -345,9 +378,9 @@
             position: absolute;
             bottom: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #1e293b;
             padding: 15px;
             border-radius: 12px;
@@ -358,8 +391,8 @@
         }
 
         #container.dark-canvas #controls {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         #controls h4 {
@@ -422,6 +455,10 @@
             margin-bottom: 30px;
             backdrop-filter: blur(10px);
         }
+
+        body.fullscreen-mode .about-section {
+            display: none;
+        }
         
         .about-section h3 {
             color: #1e3a8a;
@@ -473,6 +510,10 @@
             padding: 40px 20px 20px;
             margin-top: 50px;
             box-shadow: 0 -2px 20px rgba(0,0,0,0.3);
+        }
+
+        body.fullscreen-mode footer {
+            display: none;
         }
         
         .footer-content {
@@ -529,7 +570,7 @@
             }
 
             .layers-panel {
-                width: 250px;
+                width: 200px;
             }
         }
         
@@ -572,7 +613,7 @@
             }
 
             .layers-panel {
-                width: 220px;
+                width: 180px;
                 max-height: 500px;
             }
 
@@ -612,7 +653,7 @@
             }
 
             .layers-panel {
-                width: 200px;
+                width: 160px;
                 padding: 15px;
                 max-height: 400px;
             }
@@ -653,11 +694,20 @@
             <div id="container">
                 <!-- Canvas Background Toggle -->
                 <div class="canvas-bg-toggle">
-                    <span class="canvas-bg-label">Canvas BG</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="canvasBgToggle" onchange="toggleCanvasBackground()">
-                        <span class="slider"></span>
-                    </label>
+                    <div class="toggle-row">
+                        <span class="canvas-bg-label">Canvas BG</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="canvasBgToggle" onchange="toggleCanvasBackground()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row">
+                        <span class="canvas-bg-label">Fullscreen</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="fullscreenToggle" onchange="toggleFullscreen()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- Layers Panel Inside Canvas -->
@@ -959,6 +1009,23 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        // Fullscreen Toggle Function
+        function toggleFullscreen() {
+            const body = document.body;
+            const toggle = document.getElementById('fullscreenToggle');
+            
+            if (toggle.checked) {
+                body.classList.add('fullscreen-mode');
+            } else {
+                body.classList.remove('fullscreen-mode');
+            }
+            
+            // Trigger window resize to adjust canvas
+            setTimeout(() => {
+                onWindowResize();
+            }, 100);
+        }
+
         // Canvas Background Toggle Function
         function toggleCanvasBackground() {
             const container = document.getElementById('container');
